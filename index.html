@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Manager Fit Profiler</title>
+<style>
+:root{
+  --ink:#16181d; --ink2:#4a4f5a; --ink3:#767c88;
+  --line:#e3e5ea; --bg:#fbfbfc; --card:#ffffff;
+  --accent:#2f5d50; --accent2:#7a9e93; --warm:#b4693a; --soft:#f2f4f3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Inter,Helvetica,Arial,sans-serif;}
+.wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px}
+h1{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.02em}
+h2{font-size:21px;margin:40px 0 6px;letter-spacing:-.01em}
+h3{font-size:16px;margin:24px 0 6px}
+p{margin:0 0 14px;color:var(--ink2)}
+.lede{font-size:17px;color:var(--ink2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 26px;margin:18px 0}
+.note{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent2);
+  border-radius:8px;padding:14px 18px;font-size:14px;color:var(--ink2);margin:16px 0}
+.note b{color:var(--ink)}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:11px 22px}
+.primary{background:var(--accent);color:#fff}
+.primary:hover{background:#264a40}
+.primary:disabled{background:#c3ccc8;cursor:not-allowed}
+.ghost{background:transparent;color:var(--ink2);border-color:var(--line)}
+.ghost:hover{background:var(--soft)}
+.bar{height:5px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 0 6px}
+.bar>i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.meta{font-size:13px;color:var(--ink3);display:flex;justify-content:space-between;margin-bottom:26px}
+.q{border-bottom:1px solid var(--line);padding:18px 0}
+.q:last-child{border-bottom:none}
+.q p{margin:0 0 12px;color:var(--ink);font-size:15.5px}
+.q .n{color:var(--ink3);margin-right:8px;font-variant-numeric:tabular-nums}
+.likert{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.likert label{display:flex;flex-direction:column;align-items:center;gap:5px;
+  border:1px solid var(--line);border-radius:8px;padding:8px 4px;cursor:pointer;
+  font-size:11px;color:var(--ink3);text-align:center;line-height:1.25;transition:.15s;background:#fff}
+.likert label:hover{border-color:var(--accent2)}
+.likert input{margin:0;accent-color:var(--accent)}
+.likert label.on{background:var(--soft);border-color:var(--accent);color:var(--accent)}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:28px;align-items:center}
+.warn{color:var(--warm);font-size:13.5px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0 4px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600}
+.sbar{background:var(--line);height:8px;border-radius:99px;position:relative;min-width:90px}
+.sbar>i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.sbar.alt>i{background:var(--accent2)}
+.num{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;width:46px}
+.rank{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line)}
+.rank:last-child{border-bottom:none}
+.badge{flex:none;width:42px;height:42px;border-radius:10px;background:var(--soft);color:var(--accent);
+  display:grid;place-items:center;font-weight:700;font-size:15px}
+.rank h4{margin:0 0 2px;font-size:16px}
+.rank .pct{color:var(--ink3);font-size:13px;font-variant-numeric:tabular-nums}
+.rank p{margin:6px 0 0;font-size:14.5px}
+.flag{border-left:3px solid var(--warm);background:#fdf7f3;border-radius:6px;padding:12px 16px;margin:10px 0;font-size:14.5px;color:var(--ink2)}
+.flag b{color:var(--ink)}
+ul{margin:8px 0 14px;padding-left:20px;color:var(--ink2);font-size:14.5px}
+li{margin:5px 0}
+.hide{display:none}
+.tag{display:inline-block;background:var(--soft);border-radius:5px;padding:2px 9px;font-size:12.5px;color:var(--ink2);margin:3px 4px 3px 0}
+footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink3)}
+@media print{
+  body{background:#fff} .noprint{display:none!important}
+  .card{break-inside:avoid;border-color:#ccc} .wrap{max-width:none;padding:0}
+}
+@media(max-width:600px){
+  .likert{grid-template-columns:repeat(5,1fr);gap:3px}
+  .likert label{font-size:9.5px;padding:7px 2px}
+  .wrap{padding:24px 16px 60px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ INTRO ============ -->
+<section id="intro">
+  <h1>Product Manager Fit Profiler</h1>
+  <p class="lede">A structured self-assessment for working out <b>which kind</b> of product management fits you — which archetype of the role, which organisational environment, and which problem domain. 60 questions, about 10&ndash;12 minutes.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">What it measures</h3>
+    <p>Person&ndash;environment fit theory holds that satisfaction and performance come less from ability alone than from the match between a person's dispositions and needs and what a given environment supplies and demands. This instrument samples four layers of that match:</p>
+    <table>
+      <tr><th style="width:32%">Layer</th><th>Constructs</th></tr>
+      <tr><td><b>Disposition</b><br><span style="color:var(--ink3);font-size:13px">20 items</span></td><td>Five trait dimensions drawn from the Five-Factor model, narrowed to the facets that predict PM performance: ambiguity tolerance, execution discipline, assertive influence, consensus orientation, emotional steadiness.</td></tr>
+      <tr><td><b>Work values</b><br><span style="color:var(--ink3);font-size:13px">16 items</span></td><td>What the job has to supply for you to stay motivated: autonomy, mission, technical craft, commercial drive. Closest in spirit to career-anchor and work-values research.</td></tr>
+      <tr><td><b>Context preference</b><br><span style="color:var(--ink3);font-size:13px">12 items</span></td><td>Structural fit: tolerance for low-process environments, pace and risk appetite, tolerance for stakeholder density.</td></tr>
+      <tr><td><b>Domain interest</b><br><span style="color:var(--ink3);font-size:13px">12 items</span></td><td>Vocational interest in six problem families, which maps to industry shortlists.</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <b>Read this before you start.</b> This is an original instrument built on public-domain frameworks. It has not been validated against a normative sample, so scores are <b>ipsative</b> &mdash; they compare your scales against each other, not against other people. It is a well-structured mirror for reflection and a good input to a career conversation. It is not a selection tool, a clinical measure, or a substitute for a professionally validated assessment, and it should not be used to make a hiring decision about anyone.
+  </div>
+
+  <div class="note">
+    <b>How to answer.</b> Respond as you actually are on an ordinary week, not as you'd like to be or as you are on your best day. Go fast &mdash; first instinct is usually the more accurate one. Some items are worded in reverse on purpose, so read each one properly. Nothing is sent anywhere; everything stays in this page.
+  </div>
+
+  <div class="nav"><span></span><button class="primary" onclick="start()">Begin &rarr;</button></div>
+</section>
+
+<!-- ============ QUESTIONNAIRE ============ -->
+<section id="quiz" class="hide">
+  <div class="bar"><i id="prog" style="width:0%"></i></div>
+  <div class="meta"><span id="secname"></span><span id="counter"></span></div>
+  <h2 id="sectitle" style="margin-top:0"></h2>
+  <p id="secdesc" style="font-size:14.5px"></p>
+  <div class="card" id="items"></div>
+  <div class="nav">
+    <button class="ghost" id="back" onclick="prevPage()">&larr; Back</button>
+    <span class="warn" id="warn"></span>
+    <button class="primary" id="next" onclick="nextPage()">Continue &rarr;</button>
+  </div>
+</section>
+
+<!-- ============ REPORT ============ -->
+<section id="report" class="hide"></section>
+
+<footer>
+  Built on public-domain constructs (Five-Factor model via IPIP-style item writing, vocational interest theory, work-values research, the Competing Values Framework). Contains no items from any proprietary or trademarked instrument. Ipsative scoring; no normative sample.
+</footer>
+</div>
+
+<script>
+/* ============================================================
+   ITEM BANK
+   key: scale code | r: reverse-scored
+   ============================================================ */
+const SCALES = {
+  AMB:{name:"Ambiguity tolerance",  grp:"disp", desc:"Comfort acting without a clear brief or complete data."},
+  STR:{name:"Execution discipline", grp:"disp", desc:"Structure, follow-through, and traceable decision-making."},
+  INF:{name:"Assertive influence",  grp:"disp", desc:"Willingness to take a position and sell it against resistance."},
+  CON:{name:"Consensus & empathy",  grp:"disp", desc:"Attention to others' reasoning, feelings, and buy-in."},
+  STE:{name:"Emotional steadiness", grp:"disp", desc:"Composure under public failure and sustained pressure."},
+  AUT:{name:"Autonomy need",        grp:"val",  desc:"How much latitude the role must give you to decide what gets built."},
+  MIS:{name:"Mission need",         grp:"val",  desc:"How much you need to believe in the product beyond its revenue."},
+  TEC:{name:"Technical craft",      grp:"val",  desc:"Appetite for depth in the technology and the data itself."},
+  COM:{name:"Commercial drive",     grp:"val",  desc:"Motivation from numbers, pricing, growth, and unit economics."},
+  CHA:{name:"Low-process comfort",  grp:"ctx",  desc:"Tolerance for undefined roles and absent process."},
+  PAC:{name:"Pace & risk appetite", grp:"ctx",  desc:"Preference for speed and visible bets over predictability."},
+  STK:{name:"Stakeholder tolerance",grp:"ctx",  desc:"Stamina for alignment work across many teams and seniorities."},
+  CONS:{name:"Consumer & behaviour",grp:"dom",  desc:"Human behaviour at scale."},
+  FIN:{name:"Money & risk",         grp:"dom",  desc:"Value, risk, regulated accuracy."},
+  HLTH:{name:"Health & science",    grp:"dom",  desc:"Care, outcomes, institutional impact."},
+  INFRA:{name:"Infrastructure & tools",grp:"dom",desc:"Products whose users are builders."},
+  ENT:{name:"Enterprise operations",grp:"dom",  desc:"How large organisations actually work."},
+  AI:{name:"Data & AI",             grp:"dom",  desc:"Probabilistic products where the model is the product."}
+};
+
+const SECTIONS = [
+  {name:"Section 1 of 4", title:"How you tend to operate",
+   desc:"Dispositional tendencies. Answer for your ordinary working self, not your best day.", from:0, to:20},
+  {name:"Section 2 of 4", title:"What you need from the work",
+   desc:"Motivational needs. These are about what has to be true for you to stay engaged over years, not months.", from:20, to:36},
+  {name:"Section 3 of 4", title:"The environment you want",
+   desc:"Structural preferences. There is no better or worse here — these separate company stages, not good PMs from bad ones.", from:36, to:48},
+  {name:"Section 4 of 4", title:"Problems that pull you in",
+   desc:"Domain interest. Answer on genuine curiosity, not on where you think the money or the jobs are.", from:48, to:60}
+];
+
+const ITEMS = [
+ // --- AMB
+ {t:"I'm comfortable making a call when the data is incomplete and won't get better soon.",k:"AMB"},
+ {t:"Vague, open-ended problems energise me more than well-defined ones.",k:"AMB"},
+ {t:"I get uneasy when the goal keeps shifting underneath me.",k:"AMB",r:1},
+ {t:"I'd rather start from a rough hypothesis than wait for a clear brief.",k:"AMB"},
+ // --- STR
+ {t:"I keep a system for tracking commitments, and things rarely slip through it.",k:"STR"},
+ {t:"I enjoy turning a messy plan into a sequenced, defensible roadmap.",k:"STR"},
+ {t:"I lose interest once a project moves into detailed follow-through.",k:"STR",r:1},
+ {t:"I write decisions down so the reasoning can be traced back later.",k:"STR"},
+ // --- INF
+ {t:"I'm comfortable being the person who says “here's the decision” in a divided room.",k:"INF"},
+ {t:"I'll push back on a senior stakeholder when I think they're wrong.",k:"INF"},
+ {t:"It drains me to keep selling an idea that people haven't bought yet.",k:"INF",r:1},
+ {t:"I naturally take the floor in group discussions.",k:"INF"},
+ // --- CON
+ {t:"I spend real time understanding why someone disagrees before I respond.",k:"CON"},
+ {t:"I read the emotional undercurrent of a room fairly accurately.",k:"CON"},
+ {t:"I'd rather move fast than spend time bringing everyone along.",k:"CON",r:1},
+ {t:"Preserving the relationship matters to me even when I've won the argument.",k:"CON"},
+ // --- STE
+ {t:"I stay level-headed when a launch goes badly in public.",k:"STE"},
+ {t:"Criticism of my work stays with me for days.",k:"STE",r:1},
+ {t:"I can hold several unresolved problems at once without it costing me sleep.",k:"STE"},
+ {t:"Sustained pressure over many months tends to wear me down.",k:"STE",r:1},
+ // --- AUT
+ {t:"I want wide latitude to decide what gets built, not only how it gets built.",k:"AUT"},
+ {t:"Frequent check-ins with a manager feel more constraining than supportive.",k:"AUT"},
+ {t:"I'd trade some job security for more control over my own work.",k:"AUT"},
+ {t:"I prefer clear direction from above to defining the direction myself.",k:"AUT",r:1},
+ // --- MIS
+ {t:"I need to believe the product matters for reasons beyond revenue.",k:"MIS"},
+ {t:"I'd accept lower pay to work on a problem I actually care about.",k:"MIS"},
+ {t:"What the company does matters less to me than how well I do my own job.",k:"MIS",r:1},
+ {t:"I think about the user's life, not only their usage.",k:"MIS"},
+ // --- TEC
+ {t:"I like getting deep enough into the technical detail to argue the trade-off myself.",k:"TEC"},
+ {t:"I read documentation, architecture write-ups, or papers for pleasure.",k:"TEC"},
+ {t:"I'd rather leave technical depth to engineers and stay on the customer side.",k:"TEC",r:1},
+ {t:"I'm comfortable working with data directly — querying it, modelling it, digging.",k:"TEC"},
+ // --- COM
+ {t:"I get real satisfaction from watching a number move.",k:"COM"},
+ {t:"I naturally think in terms of pricing, margin, and unit economics.",k:"COM"},
+ {t:"Revenue targets feel motivating rather than pressuring.",k:"COM"},
+ {t:"Commercial metrics feel like a distraction from good product work.",k:"COM",r:1},
+ // --- CHA
+ {t:"I'd rather have no process at all than the wrong process.",k:"CHA"},
+ {t:"I'm happy doing work well outside my job description — support, sales, QA, whatever's needed.",k:"CHA"},
+ {t:"I want the boundaries of my role clearly defined.",k:"CHA",r:1},
+ {t:"Building something from nothing appeals to me more than improving something large.",k:"CHA"},
+ // --- PAC
+ {t:"I'd rather ship something imperfect this week than something polished next quarter.",k:"PAC"},
+ {t:"I'm comfortable taking a bet that has a real chance of failing visibly.",k:"PAC"},
+ {t:"I prefer steady, predictable progress to sprints and swings.",k:"PAC",r:1},
+ {t:"Long planning cycles frustrate me.",k:"PAC"},
+ // --- STK
+ {t:"I'm energised by aligning many teams behind one outcome.",k:"STK"},
+ {t:"I'm patient with the organisational politics required to get large things done.",k:"STK"},
+ {t:"Having many stakeholders makes the work feel diluted and less meaningful to me.",k:"STK",r:1},
+ {t:"I'm good at managing upward across several senior people at once.",k:"STK"},
+ // --- Domain (2 each)
+ {t:"Understanding why people behave the way they do fascinates me.",k:"CONS"},
+ {t:"I'd enjoy working on something that millions of ordinary people touch daily.",k:"CONS"},
+ {t:"Money, risk, and how value moves through systems genuinely interests me.",k:"FIN"},
+ {t:"I'd find high-stakes, heavily regulated accuracy satisfying rather than stifling.",k:"FIN"},
+ {t:"I'd find meaning in products tied to health, care, or scientific outcomes.",k:"HLTH"},
+ {t:"I'd accept slow institutional buyers if the impact were significant enough.",k:"HLTH"},
+ {t:"Building tools that other builders depend on appeals to me.",k:"INFRA"},
+ {t:"I'd enjoy a product whose users are engineers.",k:"INFRA"},
+ {t:"Untangling how a large organisation actually gets its work done interests me.",k:"ENT"},
+ {t:"I'd enjoy sitting with a customer's operations team to redesign their workflow.",k:"ENT"},
+ {t:"I want to work where the core capability is a model, not just an interface over one.",k:"AI"},
+ {t:"I'm drawn to problems where the right answer is probabilistic rather than certain.",k:"AI"}
+];
+
+const LABELS = ["Strongly<br>disagree","Disagree","Neither","Agree","Strongly<br>agree"];
+
+/* ============================================================
+   PM ARCHETYPES — weighted linear fit models
+   Weights sum to 1. "!" prefix = use the inverse of that scale.
+   ============================================================ */
+const ARCHETYPES = [
+ {id:"explorer", name:"0→1 Explorer", w:{AMB:.24,CHA:.24,AUT:.20,PAC:.16,STE:.16},
+  blurb:"You are built for the phase before the product is real: customer discovery, throwaway prototypes, a roadmap that survives about nine days. You'd rather have a hard question than a clean backlog.",
+  thrives:"New-venture teams, incubation groups, founding PM roles, pre-product-market-fit startups, venture studios.",
+  costs:"These roles have poor legibility — you can work brilliantly for a year with nothing shippable to show. Promotion cases are hard to write. Expect to be measured on learning velocity, and make sure your manager agrees on that before you join.",
+  strengthen:"Get sharper at killing your own ideas on evidence. Explorers fail more often from sunk-cost attachment than from a shortage of ideas."},
+ {id:"growth", name:"Growth PM", w:{COM:.28,PAC:.20,STR:.18,TEC:.16,AMB:.18},
+  blurb:"You get satisfaction from moving a number and you're willing to run the unglamorous experiments that move it. Funnels, activation, pricing, retention curves — the mechanics of a business rather than the poetry of a product.",
+  thrives:"Consumer subscription, e-commerce, product-led-growth SaaS, marketplaces, anywhere a self-serve funnel exists.",
+  costs:"Growth work can drift toward short-horizon optimisation. The best growth PMs keep one foot in the underlying value proposition; the burnt-out ones are still A/B testing button colour in year three.",
+  strengthen:"Statistical literacy is the hard floor here — power, sample size, novelty effects, and the difference between a real lift and a lucky one."},
+ {id:"platform", name:"Platform / Technical PM", w:{TEC:.32,STR:.22,INFRA:.20,CON:.10,AMB:.16},
+  blurb:"Your users are other engineers, and your product is an abstraction. You care about the shape of an API, migration paths, and whether a decision made now will still hold at ten times the load.",
+  thrives:"Developer tools, cloud and infrastructure, internal platform teams, API-first companies, data platforms.",
+  costs:"Impact is mediated — you rarely touch the end customer, and your wins show up as things that didn't break. If you need visible user delight, this will feel arid.",
+  strengthen:"Platform PMs live or die on internal customer management. Treat your engineering consumers with the same discipline an external PM gives a paying account."},
+ {id:"enterprise", name:"Enterprise / B2B PM", w:{STK:.24,STR:.22,CON:.18,COM:.20,ENT:.16},
+  blurb:"You can hold a picture of a customer's whole operating reality in your head — the buyer, the admin, the reluctant end user, the procurement cycle — and you're patient enough to sell inside your own company as well as outside it.",
+  thrives:"Enterprise SaaS, vertical software, fintech infrastructure, healthtech, govtech, anything with a sales-led motion.",
+  costs:"The loudest customer is rarely the most representative one, and roadmaps here are easily captured by whoever signed the biggest contract. Build the discipline to say no to a large logo.",
+  strengthen:"Learn the commercial machinery properly — how deals are structured, where the sales team's incentives point, what actually blocks renewal."},
+ {id:"consumer", name:"Consumer Experience PM", w:{CONS:.28,CON:.20,MIS:.18,AMB:.16,INF:.18},
+  blurb:"You think about the person on the other side of the screen — their habits, their frictions, their reasons for not coming back. Craft and taste matter to you, and you can argue for them without hiding behind data.",
+  thrives:"Consumer apps, media and entertainment, social, health and wellness, travel, education, consumer fintech.",
+  costs:"Consumer taste is contested and your judgement will be overruled by people with more power and worse instincts. You need the influence skill to protect quality decisions, not just the taste to have them.",
+  strengthen:"Pair your qualitative instinct with hard measurement. Taste that can't be defended empirically loses most arguments in most companies."},
+ {id:"aiml", name:"Data / AI PM", w:{AI:.28,TEC:.24,AMB:.20,STR:.14,MIS:.14},
+  blurb:"You're comfortable when the product doesn't behave the same way twice. Evaluation design, failure modes, the gap between a demo and a dependable system — that's the interesting part rather than the annoying part.",
+  thrives:"AI-native products, ML platform teams, search and recommendation, applied research groups, data products.",
+  costs:"Capability moves faster than your roadmap, and a model release can invalidate a quarter of work. Sustained ambiguity tolerance is the load-bearing trait, not technical knowledge.",
+  strengthen:"Invest in evaluation craft. In this archetype the PM who owns the eval set owns the product direction."},
+ {id:"opex", name:"Internal / Operations PM", w:{ENT:.24,STR:.24,CON:.18,STK:.20,TEC:.14},
+  blurb:"You get a specific satisfaction from making a broken system work — the process nobody owns, the tool everyone complains about, the handoff that loses information every time.",
+  thrives:"Internal tools, business operations platforms, supply chain, fintech back office, logistics, workforce software.",
+  costs:"Internal work is chronically under-resourced and under-credited. Fit here depends on being motivated by the fix itself rather than the recognition.",
+  strengthen:"Get rigorous about quantifying operational impact in money and hours. It is the only reliable way this work gets funded."}
+];
+
+/* ============ ORG ENVIRONMENTS ============ */
+const ENVS = [
+ {id:"preseed", name:"Pre-product-market-fit startup", sub:"Seed to Series A, under ~50 people",
+  w:{CHA:.28,AMB:.24,AUT:.24,PAC:.16,STE:.08},
+  good:"Almost no process, undefined role, direct access to founders, decisions in hours. Your leverage is enormous and so is the variance.",
+  bad:"Little mentorship, few peers to learn the craft from, and real chance the company dies under you."},
+ {id:"scaleup", name:"Scaleup", sub:"Series B to D, roughly 50–500 people",
+  w:{PAC:.26,AMB:.20,STR:.20,INF:.18,STK:.16},
+  good:"Process is being invented while you work, and PMs who can both ship and build the system get promoted fast.",
+  bad:"Constant reorganisation, unclear ownership boundaries, and a real risk of being spread across too many surfaces."},
+ {id:"bigtech", name:"Large technology company", sub:"Established, thousands of people",
+  w:{STK:.24,STR:.24,INF:.18,TEC:.16,CON:.10,"!AUT":.08},
+  good:"Serious craft standards, strong peers, real resources, and genuine scale of impact when you land something.",
+  bad:"Scope is narrow, the alignment tax is heavy, and a great deal of your energy goes into getting permission rather than building."},
+ {id:"incumbent", name:"Regulated or traditional incumbent", sub:"Banks, insurers, health systems, government, industrials",
+  w:{STR:.22,CON:.16,STE:.14,STK:.14,"!PAC":.18,"!CHA":.16},
+  good:"High-stakes domains, deep problems, and an enormous gap between current and possible — which is exactly the opportunity.",
+  bad:"Slow cycles, compliance gates, and legacy systems. Fit depends on finding the constraint interesting rather than infuriating."},
+ {id:"agency", name:"Consultancy, agency, or portfolio work", sub:"Client-facing or fractional",
+  w:{AMB:.22,INF:.22,CON:.20,PAC:.18,"!MIS":.18},
+  good:"Enormous pattern exposure across companies and industries in a short time, and unusually fast skill compounding.",
+  bad:"You leave before you see the second-order consequences, and rarely own an outcome end to end."}
+];
+
+/* ============ DOMAIN → INDUSTRY MAP ============ */
+const DOMAINS = {
+ CONS:{name:"Consumer & behaviour", inds:"Social, media & entertainment, consumer subscription, travel, dating, consumer health, education, gaming",
+   why:"You're pulled by human behaviour at scale — habits, motivation, and why people do or don't come back."},
+ FIN:{name:"Money, risk & regulation", inds:"Fintech, payments, banking infrastructure, insurance, wealth & trading, RegTech, crypto infrastructure",
+   why:"You find systems of value and risk interesting, and treat regulatory constraint as part of the puzzle rather than an obstacle."},
+ HLTH:{name:"Health, care & science", inds:"Digital health, clinical software, biotech tooling, medical devices, care delivery, life-science platforms",
+   why:"You want the work to touch outcomes that matter physically, and you'll accept slower institutional cycles to get there."},
+ INFRA:{name:"Infrastructure & developer tools", inds:"Developer tools, cloud & DevOps, databases, security, observability, open-source companies, API platforms",
+   why:"You're drawn to products whose users are builders, where quality is judged on abstraction and reliability."},
+ ENT:{name:"Enterprise operations", inds:"Vertical SaaS, supply chain & logistics, HR & workforce tech, procurement, legal tech, industrial software",
+   why:"You find the mechanics of how large organisations actually function genuinely interesting rather than tedious."},
+ AI:{name:"Data & AI", inds:"AI-native products, ML platforms, search & recommendation, analytics & BI, data infrastructure, applied research",
+   why:"You're comfortable with probabilistic behaviour and interested in products where the model is the substance."}
+};
+
+/* ============================================================
+   STATE + RENDER
+   ============================================================ */
+let page=0, answers=new Array(ITEMS.length).fill(0);
+
+function start(){ document.getElementById("intro").classList.add("hide");
+  document.getElementById("quiz").classList.remove("hide"); render(); }
+
+function render(){
+  const s=SECTIONS[page];
+  document.getElementById("secname").textContent=s.name;
+  document.getElementById("sectitle").textContent=s.title;
+  document.getElementById("secdesc").textContent=s.desc;
+  const done=answers.filter(a=>a>0).length;
+  document.getElementById("counter").textContent=done+" of "+ITEMS.length+" answered";
+  document.getElementById("prog").style.width=(done/ITEMS.length*100)+"%";
+  document.getElementById("back").style.visibility=page===0?"hidden":"visible";
+  document.getElementById("next").textContent=page===SECTIONS.length-1?"See my report →":"Continue →";
+  document.getElementById("warn").textContent="";
+
+  let h="";
+  for(let i=s.from;i<s.to;i++){
+    h+='<div class="q" id="q'+i+'"><p><span class="n">'+(i+1)+'.</span>'+ITEMS[i].t+'</p><div class="likert">';
+    for(let v=1;v<=5;v++){
+      h+='<label class="'+(answers[i]===v?"on":"")+'" onclick="pick('+i+','+v+')">'
+       +'<input type="radio" name="i'+i+'" '+(answers[i]===v?"checked":"")+'><span>'+LABELS[v-1]+'</span></label>';
+    }
+    h+='</div></div>';
+  }
+  document.getElementById("items").innerHTML=h;
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+function pick(i,v){
+  answers[i]=v;
+  const q=document.getElementById("q"+i);
+  [...q.querySelectorAll("label")].forEach((l,ix)=>l.classList.toggle("on",ix===v-1));
+  const done=answers.filter(a=>a>0).length;
+  document.getElementById("counter").textContent=done+" of "+ITEMS.length+" answered";
+  document.getElementById("prog").style.width=(done/ITEMS.length*100)+"%";
+  document.getElementById("warn").textContent="";
+}
+
+function prevPage(){ if(page>0){page--;render();} }
+
+function nextPage(){
+  const s=SECTIONS[page];
+  const missing=[];
+  for(let i=s.from;i<s.to;i++) if(!answers[i]) missing.push(i+1);
+  if(missing.length){
+    document.getElementById("warn").textContent=missing.length+" unanswered on this page.";
+    const el=document.getElementById("q"+(missing[0]-1));
+    el.scrollIntoView({behavior:"smooth",block:"center"});
+    el.style.background="#fdf7f3"; setTimeout(()=>el.style.background="",1400);
+    return;
+  }
+  if(page>=SECTIONS.length-1){ buildReport(); return; }
+  page++; render();
+}
+
+/* ============================================================
+   SCORING
+   ============================================================ */
+function scoreScales(a){
+  const acc={},cnt={};
+  ITEMS.forEach((it,i)=>{
+    const raw = it.r ? (6-a[i]) : a[i];
+    acc[it.k]=(acc[it.k]||0)+raw; cnt[it.k]=(cnt[it.k]||0)+1;
+  });
+  const out={};
+  for(const k in acc) out[k]=Math.round(((acc[k]/cnt[k])-1)/4*1000)/10; // 0–100, 1dp
+  return out;
+}
+function fit(weights,S){
+  let t=0;
+  for(const k in weights){
+    const inv=k.charAt(0)==="!";
+    const key=inv?k.slice(1):k;
+    const v=inv?(100-S[key]):S[key];
+    t+=v*weights[k];
+  }
+  return Math.round(t*10)/10;
+}
+function responseStyle(a){
+  const m=a.reduce((x,y)=>x+y,0)/a.length;
+  const sd=Math.sqrt(a.reduce((x,y)=>x+(y-m)*(y-m),0)/a.length);
+  const mid=a.filter(v=>v===3).length/a.length;
+  const ext=a.filter(v=>v===1||v===5).length/a.length;
+  const notes=[];
+  if(sd<0.75) notes.push("Your answers varied little across the 60 items. That flattens the contrasts this report depends on, so treat the rankings below as weak signals rather than findings.");
+  if(mid>0.42) notes.push("You chose the neutral midpoint on "+Math.round(mid*100)+"% of items. That is common when someone is genuinely undecided, but it compresses the profile — the differences between your top and bottom scales are smaller than they'd otherwise be.");
+  if(ext>0.68) notes.push("You used the extreme ends on "+Math.round(ext*100)+"% of items. Strong self-knowledge produces this, and so does answering aspirationally. Worth a second look at any scale that surprised you.");
+  if(m>4.1) notes.push("Your average response was high across the board, including on items pointing in opposite directions. Some acquiescence bias may be inflating several scales at once.");
+  return notes;
+}
+
+/* ============================================================
+   TENSIONS / WATCH-OUTS
+   ============================================================ */
+function tensions(S,topArch,topEnv){
+  const F=[];
+  const hi=v=>v>=62, lo=v=>v<=40;
+  if(hi(S.AMB)&&lo(S.STR)) F.push(["Ideas outpace delivery",
+    "High ambiguity tolerance with low execution discipline is the most common PM derailer. You'll be first to the right question and unreliable on the last twenty per cent. Compensate structurally rather than by willpower: pair with a strong delivery lead or programme manager and make finishing someone's explicit job."]);
+  if(hi(S.STR)&&lo(S.AMB)) F.push(["Needs the brief before the work",
+    "You execute well but want the problem defined first. That is genuinely valuable in scaled organisations and genuinely painful in early-stage ones. Screen hard for whether a role hands you a problem or expects you to find one."]);
+  if(hi(S.AUT)&&topEnv.id==="bigtech") F.push(["Autonomy need versus environment",
+    "Your autonomy score is high but your context preferences point toward a large organisation. Those pull against each other. It's workable — but you'd want a role with genuine charter ownership rather than a slice of someone else's roadmap, and you should ask about that directly."]);
+  if(hi(S.CON)&&lo(S.INF)) F.push(["Consensus without assertion",
+    "You read people well and avoid imposing. The failure mode is a roadmap shaped by whoever pushed hardest. The fix isn't personality change — it's process: written decision records, explicit decision rights, and disagree-and-commit norms that let you hold a line without a confrontation."]);
+  if(hi(S.INF)&&lo(S.CON)) F.push(["Assertion without alignment",
+    "You take positions readily and spend less on bringing people with you. This works until you need sustained cooperation from people who don't report to you — which is most of the PM job. The cost usually shows up as quiet non-compliance rather than open disagreement."]);
+  if(lo(S.STE)&&hi(S.PAC)) F.push(["Pace appetite versus recovery",
+    "You want speed and visible bets, but your steadiness score suggests the failures land hard and stay a while. That combination is a known burnout path. It's manageable with deliberate recovery structure, and it's worth knowing about you before a company finds out for you."]);
+  if(hi(S.MIS)&&hi(S.COM)) F.push(["Mission and commerce both loaded",
+    "You need both meaning and measurable commercial results. Fewer companies satisfy both than claim to. Look for businesses where the revenue mechanism and the good outcome are the same event, rather than ones where mission is a marketing layer over an unrelated model."]);
+  if(lo(S.TEC)&&(topArch.id==="platform"||topArch.id==="aiml")) F.push(["Domain interest ahead of technical appetite",
+    "Your interest points at a technical archetype but your appetite for technical depth scores lower. Interest can pull you through the learning, but these roles ask for daily depth, not occasional curiosity. Worth testing with a real project before committing a career move."]);
+  if(lo(S.STK)&&(topEnv.id==="bigtech"||topEnv.id==="incumbent")) F.push(["Stakeholder load versus environment",
+    "The environments scoring highest for you are also the ones with the heaviest alignment burden, and your tolerance for that scored low. Read this as a caution on organisation size specifically, not on the industry."]);
+  if(hi(S.CHA)&&hi(S.STR)) F.push(["Comfortable in chaos, but you build order",
+    "This is an unusual and valuable combination rather than a problem: you can tolerate an unstructured environment and you instinctively build the structure it lacks. It is exactly the profile early scaleups need and rarely find. Make sure you're paid for the second half, not just the first."]);
+  return F;
+}
+
+/* ============================================================
+   INTERVIEW QUESTIONS
+   ============================================================ */
+const QMAP={
+ AUT:["How much of what gets built does the PM decide, versus receive from leadership or sales?","Walk me through the last time a PM here changed the roadmap on their own evidence."],
+ STR:["What's the operating cadence — planning, reviews, written docs versus meetings?","How are decisions recorded, and can someone new find out why a past call was made?"],
+ AMB:["Is this role solving a defined problem or finding one? Which of those does success look like?","How much of the problem space is still open six months in?"],
+ STK:["How many teams does this PM need to align to ship something meaningful?","Who can say no to this roadmap, and how often do they?"],
+ TEC:["How deep does the PM go technically here — do they argue architecture trade-offs or receive them?","Do PMs write their own queries and analyses, or route through a data team?"],
+ COM:["What number is this role accountable for, and does the PM control the levers that move it?","How does pricing get decided, and does product have a seat in it?"],
+ MIS:["Where does this product's revenue come from, and is the customer's win the same event as the company's?","What's a decision the company made recently that cost it money for the right reason?"],
+ PAC:["How long from idea to something in front of a user? Give me a real recent example.","What was the last big bet that failed, and what happened to the people who made it?"],
+ CHA:["What process exists today, and what does someone in this seat have to invent?","How defined is this role's scope, honestly, and who decides when it changes?"],
+ INF:["How does a PM here change a senior leader's mind? Give me a real instance.","When product and sales disagree on priority, what actually happens?"],
+ CON:["How does this team handle disagreement — what happened the last time two leads wanted different things?","What does support for a struggling PM look like here in practice?"],
+ STE:["What does a bad quarter look like inside this team?","How does the company communicate when something goes badly wrong publicly?"]
+};
+
+/* ============================================================
+   REPORT
+   ============================================================ */
+function radar(scales,keys,size){
+  const cx=size/2, cy=size/2, R=size/2-46, n=keys.length;
+  const pt=(i,r)=>{const ang=-Math.PI/2+i*2*Math.PI/n;return [cx+Math.cos(ang)*r,cy+Math.sin(ang)*r];};
+  let g="";
+  [0.25,0.5,0.75,1].forEach(f=>{
+    let p=[];for(let i=0;i<n;i++)p.push(pt(i,R*f).map(v=>v.toFixed(1)).join(","));
+    g+='<polygon points="'+p.join(" ")+'" fill="none" stroke="#e3e5ea" stroke-width="1"/>';
+  });
+  for(let i=0;i<n;i++){const[x,y]=pt(i,R);g+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="#e3e5ea"/>';}
+  let p=[];for(let i=0;i<n;i++)p.push(pt(i,R*Math.max(scales[keys[i]],3)/100).map(v=>v.toFixed(1)).join(","));
+  g+='<polygon points="'+p.join(" ")+'" fill="rgba(47,93,80,.16)" stroke="#2f5d50" stroke-width="2" stroke-linejoin="round"/>';
+  for(let i=0;i<n;i++){
+    const[x,y]=pt(i,R*Math.max(scales[keys[i]],3)/100);
+    g+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5" fill="#2f5d50"/>';
+    const[lx,ly]=pt(i,R+26);
+    const anch=Math.abs(lx-cx)<6?"middle":(lx>cx?"start":"end");
+    const nm=SCALES[keys[i]].name.split(" ");
+    g+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anch+'" font-size="11.5" fill="#4a4f5a">'
+      +'<tspan x="'+lx.toFixed(1)+'">'+nm[0]+'</tspan>'
+      +(nm.length>1?'<tspan x="'+lx.toFixed(1)+'" dy="13">'+nm.slice(1).join(" ")+'</tspan>':'')
+      +'<tspan x="'+lx.toFixed(1)+'" dy="13" font-weight="700" fill="#2f5d50">'+Math.round(scales[keys[i]])+'</tspan></text>';
+  }
+  return '<svg viewBox="0 0 '+size+' '+size+'" width="100%" style="max-width:440px;display:block;margin:6px auto">'+g+'</svg>';
+}
+
+function barRows(S,keys,alt){
+  return keys.map(k=>'<tr><td style="width:34%"><b>'+SCALES[k].name+'</b><br><span style="color:var(--ink3);font-size:12.5px">'+SCALES[k].desc+'</span></td>'
+   +'<td class="num">'+Math.round(S[k])+'</td>'
+   +'<td><div class="sbar'+(alt?" alt":"")+'"><i style="width:'+S[k]+'%"></i></div></td></tr>').join("");
+}
+
+function buildReport(){
+  const S=scoreScales(answers);
+  const A=ARCHETYPES.map(a=>({...a,score:fit(a.w,S)})).sort((x,y)=>y.score-x.score);
+  const E=ENVS.map(e=>({...e,score:fit(e.w,S)})).sort((x,y)=>y.score-x.score);
+  const D=Object.keys(DOMAINS).map(k=>({k,...DOMAINS[k],score:S[k]})).sort((x,y)=>y.score-x.score);
+  const rs=responseStyle(answers);
+  const T=tensions(S,A[0],E[0]);
+
+  const dispK=["AMB","STR","INF","CON","STE"];
+  const valK=["AUT","MIS","TEC","COM"];
+  const ctxK=["CHA","PAC","STK"];
+
+  // top scales for interview questions
+  const needK=[...valK,...ctxK,...dispK].sort((a,b)=>S[b]-S[a]).slice(0,4);
+  const qs=[];needK.forEach(k=>{if(QMAP[k])qs.push(...QMAP[k].slice(0,1));});
+  needK.slice(0,2).forEach(k=>{if(QMAP[k]&&QMAP[k][1])qs.push(QMAP[k][1]);});
+
+  const spread=Math.round(A[0].score-A[A.length-1].score);
+  const gap=Math.round((A[0].score-A[1].score)*10)/10;
+
+  let h='<h1>Your Product Manager Fit Profile</h1>'
+   +'<p class="lede">Generated '+new Date().toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"})
+   +'. Scores are relative to your own responses, not to other people — read the ordering, not the absolute numbers.</p>';
+
+  if(rs.length){
+    h+='<div class="note"><b>A note on how you answered.</b> ';
+    h+=rs.join(" ")+'</div>';
+  }
+
+  /* --- headline --- */
+  h+='<div class="card"><h2 style="margin-top:0">The short version</h2><p>'
+   +'Your strongest role fit is <b>'+A[0].name+'</b>'
+   +(gap<3?', though '+A[1].name+' is within noise of it — treat the top two as a pair rather than a ranking.'
+          :', with a clear gap to the next option.')
+   +' The environment that best matches your context preferences is <b>'+E[0].name.toLowerCase()+'</b>, and the problem domain pulling you hardest is <b>'+D[0].name.toLowerCase()+'</b>.</p>'
+   +'<p>Across all seven archetypes your fit scores span '+spread+' points. '
+   +(spread<12?'That is a narrow spread, which means your profile is fairly generalist — you could work in several of these and the deciding factor should be domain interest and environment rather than role type.'
+             :spread>26?'That is a wide spread, which means your profile is quite differentiated. The bottom of this list is real information: those roles would likely cost you.'
+             :'That is a moderate spread — a clear leading direction, with genuine optionality behind it.')+'</p></div>';
+
+  /* --- disposition --- */
+  h+='<h2>1. How you operate</h2><p>Five dispositional dimensions, drawn from the Five-Factor tradition and narrowed to what the PM role actually loads on. None of these has a good end and a bad end; each has an environment where it is an asset and one where it is a tax.</p>'
+   +'<div class="card">'+radar(S,dispK,400)+'<table>'+barRows(S,dispK)+'</table></div>';
+
+  /* --- values --- */
+  h+='<h2>2. What the work has to supply</h2><p>Motivational needs. Mismatch here is the usual cause of leaving a job that looked good on paper — the role was fine, it just did not supply the thing you actually need.</p>'
+   +'<div class="card"><table>'+barRows(S,valK,1)+'</table></div>';
+
+  /* --- context --- */
+  h+='<h2>3. The environment you want</h2><p>Structural preferences. These separate company stages more reliably than they separate strong PMs from weak ones.</p>'
+   +'<div class="card"><table>'+barRows(S,ctxK,1)+'</table></div>';
+
+  /* --- archetypes --- */
+  h+='<h2>4. Role archetype fit</h2><p>Each archetype is a weighted combination of the scales above. Read the top three carefully and the bottom one honestly.</p><div class="card">';
+  A.forEach((a,i)=>{
+    const show=i<3;
+    if(show){
+      h+='<div class="rank"><div class="badge">'+(i+1)+'</div><div><h4>'+a.name+' <span class="pct">'+a.score+'</span></h4>'
+        +'<div class="sbar" style="margin:6px 0 8px;max-width:260px"><i style="width:'+a.score+'%"></i></div>'
+        +'<p>'+a.blurb+'</p>'
+        +'<p><b>Where it lives:</b> '+a.thrives+'</p>'
+        +'<p><b>What it will cost you:</b> '+a.costs+'</p>'
+        +'<p><b>To get stronger at it:</b> '+a.strengthen+'</p></div></div>';
+    }
+  });
+  h+='<h3>Full ranking</h3><table><tr><th>Archetype</th><th>Fit</th><th></th></tr>';
+  A.forEach(a=>{h+='<tr><td>'+a.name+'</td><td class="num">'+a.score+'</td><td><div class="sbar"><i style="width:'+a.score+'%"></i></div></td></tr>';});
+  h+='</table><p style="font-size:13.5px;color:var(--ink3);margin-top:10px">The lowest-ranked archetype is not a role you cannot do. It is the one where the work would run against your grain daily, which over years is the thing that actually wears people out.</p></div>';
+
+  /* --- environments --- */
+  const egap=Math.round((E[0].score-E[1].score)*10)/10;
+  h+='<h2>5. Organisational environment fit</h2><p>Company stage and structure, which in practice predicts day-to-day satisfaction more sharply than industry does.'
+   +(egap<3?' <b>Your top two are within '+egap+' points of each other</b> — that is inside the noise of an instrument this length, so read them as a tie and let domain interest break it.':'')
+   +'</p><div class="card">';
+  E.forEach((e,i)=>{
+    h+='<div class="rank"><div class="badge">'+(i+1)+'</div><div><h4>'+e.name+' <span class="pct">'+e.score+'</span></h4>'
+     +'<div style="color:var(--ink3);font-size:13px">'+e.sub+'</div>'
+     +'<div class="sbar" style="margin:8px 0;max-width:260px"><i style="width:'+e.score+'%"></i></div>';
+    if(i<3) h+='<p><b>What suits you:</b> '+e.good+'</p><p><b>What to check:</b> '+e.bad+'</p>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+
+  /* --- domains --- */
+  h+='<h2>6. Industry and domain shortlist</h2><p>Vocational interest tends to be more stable over a career than skills are, so this is the layer worth weighting most heavily in a long-term move.</p><div class="card">';
+  D.slice(0,3).forEach((d,i)=>{
+    h+='<div class="rank"><div class="badge">'+(i+1)+'</div><div><h4>'+d.name+' <span class="pct">'+Math.round(d.score)+'</span></h4>'
+     +'<div class="sbar" style="margin:6px 0 8px;max-width:260px"><i style="width:'+d.score+'%"></i></div>'
+     +'<p>'+d.why+'</p><p>'+d.inds.split(", ").map(x=>'<span class="tag">'+x+'</span>').join("")+'</p></div></div>';
+  });
+  h+='<h3>All six</h3><table>';
+  D.forEach(d=>{h+='<tr><td style="width:40%">'+d.name+'</td><td class="num">'+Math.round(d.score)+'</td><td><div class="sbar alt"><i style="width:'+d.score+'%"></i></div></td></tr>';});
+  h+='</table></div>';
+
+  /* --- combined recommendation --- */
+  h+='<div class="card"><h2 style="margin-top:0">Putting it together</h2>'
+   +'<p>The intersection your profile points at is a <b>'+A[0].name+'</b> role, in a <b>'+E[0].name.toLowerCase()+'</b>, working on <b>'+D[0].name.toLowerCase()+'</b> problems. Concretely, that means looking at: '
+   +D[0].inds.split(", ").slice(0,4).join(", ").toLowerCase()+' — filtered to companies at that stage.</p>'
+   +'<p>Second-best combinations worth keeping open: <b>'+A[1].name+'</b> roles, and companies in the <b>'+D[1].name.toLowerCase()+'</b> space. If the ideal intersection is not available, the evidence suggests holding the environment and domain fixed and flexing the role type &mdash; interest and context tend to be more stable predictors of satisfaction than role label.</p></div>';
+
+  /* --- tensions --- */
+  if(T.length){
+    h+='<h2>7. Tensions to manage</h2><p>These are generated from combinations in your profile that tend to pull against each other. They are not flaws; they are the specific things that are worth designing around rather than discovering the hard way.</p><div class="card">';
+    T.forEach(([t,b])=>{h+='<div class="flag"><b>'+t+'.</b> '+b+'</div>';});
+    h+='</div>';
+  }
+
+  /* --- questions to ask --- */
+  h+='<h2>'+(T.length?8:7)+'. Questions to ask before you accept a role</h2>'
+   +'<p>Derived from your highest-loading needs. The point of each is to find out whether a specific company actually supplies the thing you scored highest on, rather than whether it says it does.</p>'
+   +'<div class="card"><ul>'+qs.map(q=>'<li>'+q+'</li>').join("")+'</ul>'
+   +'<p style="font-size:13.5px;color:var(--ink3)">Ask these of a peer PM rather than the hiring manager where you can. The answers are usually more specific and less rehearsed.</p></div>';
+
+  /* --- limits --- */
+  h+='<div class="note"><b>How much weight to put on this.</b> This instrument uses four items per dispositional scale and two per domain, which is enough for a directional read and not enough for a precise one. It has no normative sample, so a score of 70 means "high for you", not "higher than most people". Self-report also measures your self-concept, which is correlated with but not identical to your behaviour. The most useful way to use this report is to take the two or three findings that surprised you and test them against what people who have worked with you would say &mdash; and to treat anything that merely confirmed what you already knew as the least informative part.</div>';
+
+  h+='<div class="nav noprint"><button class="ghost" onclick="location.reload()">Start over</button>'
+   +'<button class="primary" onclick="window.print()">Save as PDF / print</button></div>';
+
+  document.getElementById("quiz").classList.add("hide");
+  const r=document.getElementById("report");
+  r.innerHTML=h; r.classList.remove("hide");
+  window.scrollTo({top:0,behavior:"instant"});
+}
+</script>
+</body>
+</html>

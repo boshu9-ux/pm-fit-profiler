@@ -473,8 +473,8 @@ const QMAP={
 /* ============================================================
    REPORT
    ============================================================ */
-function radar(scales,keys,size){
-  const cx=size/2, cy=size/2, R=size/2-46, n=keys.length;
+function radar(scales,keys){
+  const W=580, H=430, cx=W/2, cy=205, R=138, n=keys.length;
   const pt=(i,r)=>{const ang=-Math.PI/2+i*2*Math.PI/n;return [cx+Math.cos(ang)*r,cy+Math.sin(ang)*r];};
   let g="";
   [0.25,0.5,0.75,1].forEach(f=>{
@@ -487,7 +487,7 @@ function radar(scales,keys,size){
   for(let i=0;i<n;i++){
     const[x,y]=pt(i,R*Math.max(scales[keys[i]],3)/100);
     g+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5" fill="#2f5d50"/>';
-    const[lx,ly]=pt(i,R+26);
+    const[lx,ly]=pt(i,R+30);
     const anch=Math.abs(lx-cx)<6?"middle":(lx>cx?"start":"end");
     const nm=SCALES[keys[i]].name.split(" ");
     g+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anch+'" font-size="11.5" fill="#4a4f5a">'
@@ -495,7 +495,7 @@ function radar(scales,keys,size){
       +(nm.length>1?'<tspan x="'+lx.toFixed(1)+'" dy="13">'+nm.slice(1).join(" ")+'</tspan>':'')
       +'<tspan x="'+lx.toFixed(1)+'" dy="13" font-weight="700" fill="#2f5d50">'+Math.round(scales[keys[i]])+'</tspan></text>';
   }
-  return '<svg viewBox="0 0 '+size+' '+size+'" width="100%" style="max-width:440px;display:block;margin:6px auto">'+g+'</svg>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:540px;display:block;margin:6px auto;overflow:visible">'+g+'</svg>';
 }
 
 function barRows(S,keys,alt){
@@ -546,7 +546,7 @@ function buildReport(){
 
   /* --- disposition --- */
   h+='<h2>1. How you operate</h2><p>Five dispositional dimensions, drawn from the Five-Factor tradition and narrowed to what the PM role actually loads on. None of these has a good end and a bad end; each has an environment where it is an asset and one where it is a tax.</p>'
-   +'<div class="card">'+radar(S,dispK,400)+'<table>'+barRows(S,dispK)+'</table></div>';
+   +'<div class="card">'+radar(S,dispK)+'<table>'+barRows(S,dispK)+'</table></div>';
 
   /* --- values --- */
   h+='<h2>2. What the work has to supply</h2><p>Motivational needs. Mismatch here is the usual cause of leaving a job that looked good on paper — the role was fine, it just did not supply the thing you actually need.</p>'
